@@ -1,0 +1,16 @@
+language: go
+
+service:
+  - docker
+
+go:
+  - 1.x
+
+script:
+  - go test -v ./...
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker images
+  - docker build -t suryanaicker/travisdock:travis
+  - docker images
+  - docker run -it jsuryanaicker/travisdock:travis
+  - docker push suryanaicker/travisdock:travis
