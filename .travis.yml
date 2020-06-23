@@ -12,5 +12,5 @@ script:
   - docker images
   - docker build -t suryanaicker/travisdock:travis .
   - docker images
-  - docker run -it jsuryanaicker/travisdock:travis
+  - docker run -it suryanaicker/travisdock:travis
   - docker push suryanaicker/travisdock:travis
