@@ -8,7 +8,7 @@ go:
 
 script:
   - go test -v ./...
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin  
   - docker images
   - docker build -t travis .
   - docker run travis
