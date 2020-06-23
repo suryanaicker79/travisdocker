@@ -12,4 +12,5 @@ script:
   - docker images
   - docker build -t travis .
   - docker run travis
-  - docker images
+  - docker tag travis:latest suryanaicker/travis:doc
+  - docker push suryanaicker/travis:doc
