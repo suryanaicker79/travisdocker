@@ -5,12 +5,39 @@ service:
 
 go:
   - 1.x
-
+  
+  
+  before_install:
+    # install heroku CLI
+    - wget -qO- https://toolbelt.heroku.com/install.sh | sh
+    # login to docker registries (dockerhub + heroku)
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+    - echo "$HEROKU_PASSWORD" | docker login -u "$HEROKU_USERNAME" --password-stdin registry.heroku.com
+install:
+    # install deps
+    - yarn install
 script:
-  - go test -v ./...
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin  
-  - docker images
-  - docker build -t travis .
-  - docker run travis
-  - docker tag travis:latest suryanaicker/travis:doc
-  - docker push suryanaicker/travis:doc
+    #- yarn test
+    #- yarn build
+    # build docker images
+    - docker build -t suryanaicker/travis-docker-heroku .
+    - docker tag suryanaicker/travis-docker-heroku registry.heroku.com/$HEROKU_APP_NAME/web
+
+deploy:
+    provider: script
+    script:
+        # push to dockerhub
+        docker push suryanaicker/travis-docker-heroku;
+        docker push registry.heroku.com/$HEROKU_APP_NAME/web;
+        heroku container:release web --app $HEROKU_APP_NAME
+    branch: master
+
+    
+#script:
+ # - go test -v ./...
+  #- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin  
+  #- docker images
+  #- docker build -t travis .
+  #- docker run travis
+  #- docker tag travis:latest suryanaicker/travis:doc
+  #- docker push suryanaicker/travis:doc
